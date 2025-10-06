@@ -7,7 +7,9 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.delicia.app.core.Result
+import com.delicia.app.data.local.SessionManager
 import com.delicia.app.databinding.ActivityLoginBinding
+import com.delicia.app.domain.model.User // <-- Asegúrate que el import de User sea correcto
 import com.delicia.app.ui.catalog.CatalogActivity
 
 class LoginActivity : AppCompatActivity() {
@@ -38,12 +40,23 @@ class LoginActivity : AppCompatActivity() {
                     binding.progressBar.visibility = View.VISIBLE
                     binding.loginButton.isEnabled = false
                 }
-                is Result.Success -> {
+                is Result.Success<*> -> {
                     binding.progressBar.visibility = View.GONE
                     binding.loginButton.isEnabled = true
-                    Toast.makeText(this, "¡Bienvenido ${result.data.name}!", Toast.LENGTH_SHORT).show()
-                    startActivity(Intent(this, CatalogActivity::class.java))
-                    finish()
+
+                    // --- INICIO DE LA CORRECCIÓN ---
+                    // Comprobamos que los datos son del tipo que esperamos (User)
+                    if (result.data is User) {
+                        // Dentro de este 'if', el compilador ya sabe que result.data es un User
+                        Toast.makeText(this, "¡Bienvenido ${result.data.name}!", Toast.LENGTH_SHORT).show()
+
+                        // Guardamos el estado de la sesión
+                        SessionManager.saveLoginState(this, true)
+
+                        startActivity(Intent(this, CatalogActivity::class.java))
+                        finish()
+                    }
+                    // --- FIN DE LA CORRECCIÓN ---
                 }
                 is Result.Error -> {
                     binding.progressBar.visibility = View.GONE

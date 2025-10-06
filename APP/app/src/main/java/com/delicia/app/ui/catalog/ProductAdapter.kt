@@ -5,6 +5,8 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import coil.load
+import com.delicia.app.R
 import com.delicia.app.databinding.ItemProductBinding
 import com.delicia.app.domain.model.Product
 import java.text.NumberFormat
@@ -29,6 +31,21 @@ class ProductAdapter(private val onAddToCartClicked: (Product) -> Unit) :
             binding.productDescription.text = product.description
             val format: NumberFormat = NumberFormat.getCurrencyInstance(Locale("es", "PE"))
             binding.productPrice.text = format.format(product.price)
+
+            // Simulación de URLs de imagen para la demo
+            val imageUrl = when (product.id) {
+                1 -> "https://images.pexels.com/photos/267332/pexels-photo-267332.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+                2 -> "https://images.pexels.com/photos/1387070/pexels-photo-1387070.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+                3 -> "https://images.pexels.com/photos/175606/pexels-photo-175606.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+                4 -> "https://images.pexels.com/photos/896357/pexels-photo-896357.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+                else -> "https://images.pexels.com/photos/2067423/pexels-photo-2067423.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+            }
+
+            binding.productImageView.load(imageUrl) {
+                crossfade(true)
+                placeholder(R.drawable.ic_launcher_background) // Puedes crear un drawable placeholder mejor
+                error(R.drawable.ic_launcher_background)
+            }
 
             binding.addToCartButton.setOnClickListener {
                 onAddToCartClicked(product)

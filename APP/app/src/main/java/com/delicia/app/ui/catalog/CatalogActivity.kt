@@ -7,11 +7,11 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.delicia.app.cart.CartManager
 import com.delicia.app.core.Result
 import com.delicia.app.databinding.ActivityCatalogBinding
 import com.delicia.app.domain.usecase.AddToCartUseCase
 import com.delicia.app.ui.cart.CartActivity
+import com.google.android.material.snackbar.Snackbar
 
 class CatalogActivity : AppCompatActivity() {
 
@@ -33,7 +33,11 @@ class CatalogActivity : AppCompatActivity() {
     private fun setupRecyclerView() {
         adapter = ProductAdapter { product ->
             addToCartUseCase(product)
-            Toast.makeText(this, "${product.name} añadido al carrito", Toast.LENGTH_SHORT).show()
+            Snackbar.make(binding.root, "${product.name} añadido al carrito", Snackbar.LENGTH_SHORT)
+                .setAction("VER") {
+                    startActivity(Intent(this, CartActivity::class.java))
+                }
+                .show()
         }
         binding.productsRecyclerView.layoutManager = LinearLayoutManager(this)
         binding.productsRecyclerView.adapter = adapter
@@ -42,9 +46,13 @@ class CatalogActivity : AppCompatActivity() {
     private fun setupObservers() {
         viewModel.catalogState.observe(this) { result ->
             when (result) {
-                is Result.Loading -> binding.progressBar.visibility = View.VISIBLE
+                is Result.Loading -> {
+                    binding.progressBar.visibility = View.VISIBLE
+                    binding.productsRecyclerView.visibility = View.GONE
+                }
                 is Result.Success -> {
                     binding.progressBar.visibility = View.GONE
+                    binding.productsRecyclerView.visibility = View.VISIBLE
                     adapter.submitList(result.data)
                 }
                 is Result.Error -> {
