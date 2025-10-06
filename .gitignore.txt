@@ -1,0 +1,27 @@
+# Archivos de Android Studio / IntelliJ
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Gradle
+.gradle/
+build/
+**/build/
+
+# Configuraciones locales
+local.properties
+
+# Archivos del sistema
+.DS_Store
+Thumbs.db
+
+# NDK / CMake
+.externalNativeBuild
+.cxx/
+
+# Logs
+*.log
+
+# Cache
+.cache/
