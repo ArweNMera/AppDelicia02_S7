@@ -11,7 +11,6 @@ import com.delicia.app.data.remote.ApiClient
 import com.delicia.app.data.repo.ProductRepository
 import com.delicia.app.domain.model.Product
 import com.delicia.app.domain.usecase.GetCatalogUseCase
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 class CatalogViewModel(application: Application) : AndroidViewModel(application) {
@@ -22,16 +21,19 @@ class CatalogViewModel(application: Application) : AndroidViewModel(application)
     val catalogState: LiveData<Result<List<Product>>> = _catalogState
 
     init {
-        // Inicialización del repositorio y caso de uso
-        val database = AppDatabase.getDatabase(application)
-        val repository = ProductRepository(database.productDao(), ApiClient())
+        // Construimos la cadena de dependencias completa y correcta
+        val productDao = AppDatabase.getDatabase(application).productDao()
+        val apiClient = ApiClient()
+        val repository = ProductRepository(productDao, apiClient)
         getCatalogUseCase = GetCatalogUseCase(repository)
-        fetchProducts()
+
+        // Carga inicial de todos los productos
+        fetchProducts("")
     }
 
-    fun fetchProducts() {
+    fun fetchProducts(query: String) {
         viewModelScope.launch {
-            getCatalogUseCase().collect { result ->
+            getCatalogUseCase(query).collect { result ->
                 _catalogState.value = result
             }
         }

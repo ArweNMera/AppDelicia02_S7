@@ -30,5 +30,12 @@
         <activity android:name=".ui.cart.CartActivity"/>
         <activity android:name=".ui.profile.ProfileActivity"/>
 
+        <activity android:name=".ui.auth.RegisterActivity"/>
+
+        <activity android:name=".ui.detail.ProductDetailActivity" android:theme="@style/Theme.DeliciaApp"/>
+        <activity android:name=".ui.history.OrderHistoryActivity" />
+
+
+
     </application>
 </manifest>
